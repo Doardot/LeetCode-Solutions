@@ -1,0 +1,109 @@
+first I need to convert the dec to bin,
+is there a optimal way for this?  successive division might be an initial brute force stn
+
+num/2 = quotient 
+num%2 = remainder
+
+quotient /2 = quotient2
+quotient %2 = remainder2
+
+and how to append the result of this? string!!!
+then std::stoi handles the conversion to int type
+
+i dont think converting two times is a gooooood way to solve the problem, 
+but as first try, it can be
+
+so, convertDecToBin is this:
+-------
+if (num == 0)
+{
+    return 0;
+}
+
+while (num != 0)
+{
+    rem = num % 2;
+    num = num / 2;
+
+    strBinNum.append(to_string(rem));
+}
+reverse(strBinNum.begin(), strBinNum.end());
+
+return stoi(strBinNum);
+-------
+
+horrible. and will get out of range when string is too large
+i think the only way here to escape the loops might be using bitwise operations
+
+int count = 0;
+while (num > 0)
+{
+    count += (num & 1);
+    num = num >> 1;
+}
+
+while num is not 0, we sum the AND operation of num with 1
+for example
+if num = 5 (101)
+then
+101 & 001 = 1
+then we shift 1 bit to the right
+101 >> 010
+010 & 001 = 0
+010 >> 001
+1 & 1 = 1
+finally, we have
+1 + 0 + 1 = 2 numbers 1
+
+much easier way to do the thing, shoutout to my c classes
+
+now for the real deal, I just learned that sort can take a third param
+which defines the logic of the sorting
+very useful
+
+so now we have this:
+
+sortByBits(vector<int> &arr)
+
+// first we create a vector to store the val and count
+vector<pair<int, int>> vecNumAndCount;
+// then calls convertDecToBin and stores the value and the count in the vector
+for (int val : arr)
+{
+    bin = convertDecToBin(val);
+    vecNumAndCount.emplace_back(val, bin);
+}
+
+// then we sort with the premise that if the binCount is equal for both numbers
+// we use the val to decide
+sort(vecNumAndCount.begin(), vecNumAndCount.end(), [](const pair<int, int> &a, const pair<int, int> &b) {
+    if (a.second == b.second) {
+        return a.first < b.first;
+    }
+    return a.second < b.second;
+});
+
+//then we recreate the vector with the vals now ordered
+vector<int> result;
+for (auto &p : vecNumAndCount) 
+{
+    result.push_back(p.first);
+}
+
+===============
+conclusion
+
+1. the initial idea was to use successive division to find the binary representation, 
+append it to a string, 
+and convert it back to an integer
+
+it was actually a trap doing this, because double conversion is highly inefficient
+and integer overflow could happen
+
+2. I learned that the fastest way was counting the 1 bits directly using bitwise operations
+
+3. Then I discovered that sort function can take a third param 
+a custom comparator function to define exactly how elements should be ordered
+
+the two sorting rules were sort in ascending order
+and the tie-breaker would be the actual numerical number
