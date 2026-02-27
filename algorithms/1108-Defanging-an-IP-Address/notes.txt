@@ -1,0 +1,18 @@
+is there a replace method in string lib?
+
+string& replace (size_t pos, size_t len, const string& str);
+
+solution:
+// while there are still "." characters
+while ((position = address.find(find, position)) != string::npos)
+{
+    replace
+    (
+        starting position (the first occurrency of '.')
+        len to replace = 1 ('.')
+        string of new word (".")
+    )
+    // move position to the end of new string
+    position += 3
+}
+return address;
